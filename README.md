@@ -28,6 +28,7 @@
     </a>
 </p>
 
+> This is chroma's fork of `@xexnova/transformers` that enables `chromadb-default-embed`
 
 State-of-the-art Machine Learning for the web. Run 🤗 Transformers directly in your browser, with no need for a server!
 
