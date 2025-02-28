@@ -61,6 +61,10 @@ TOKENIZERS_TO_IGNORE = [
 
     # TODO: remove when KoBertTokenizer is properly supported
     'monologg/kobert',
+
+    # not used in chromadb
+    'dangvantuan/sentence-camembert-large',
+    'Jean-Baptiste/camembert-ner',
 ]
 
 MAX_TESTS = {
