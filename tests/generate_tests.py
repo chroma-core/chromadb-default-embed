@@ -3,12 +3,23 @@
 
 import json
 import os
+import sys
 from itertools import product
 
 from transformers import AutoTokenizer, AutoConfig
 import numpy as np
 
 from scripts.supported_models import SUPPORTED_MODELS
+
+# Handle protobuf compatibility issues by setting the environment variable if not already set
+# This is one of the workarounds mentioned in the error message
+if 'PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION' not in os.environ:
+    os.environ['PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION'] = 'python'
+
+# Check if we should run in local mode (safer settings)
+LOCAL_MODE = '--local' in sys.argv
+if LOCAL_MODE:
+    print("Running in local mode with safer settings")
 
 # List of tokenizers where the model isn't yet supported, but the tokenizer is
 ADDITIONAL_TOKENIZERS_TO_TEST = {
@@ -284,9 +295,12 @@ def generate_tokenizer_tests():
                     )
 
                 else:
+                    # In local mode, always use slow tokenizers to avoid protobuf issues
+                    use_fast = not LOCAL_MODE
                     decoder_tokenizer = tokenizer = AutoTokenizer.from_pretrained(
                         tokenizer_name,
-                        trust_remote_code=True)
+                        trust_remote_code=True,
+                        use_fast=use_fast)
 
             except (KeyError, EnvironmentError):
                 # If a KeyError/EnvironmentError is raised from the AutoTokenizer, it
@@ -333,11 +347,13 @@ def generate_tokenizer_tests():
 
     for tokenizer_id in TOKENIZERS_WITH_CHAT_TEMPLATES:
         print(f'Generating chat templates for {tokenizer_id}')
+
+        # In local mode, use safer settings
+        use_fast = not LOCAL_MODE or 'llama' not in tokenizer_id
+
         tokenizer = AutoTokenizer.from_pretrained(
             tokenizer_id,
-
-            # TODO: Remove once https://github.com/huggingface/transformers/pull/26678 is fixed
-            use_fast='llama' not in tokenizer_id,
+            use_fast=use_fast,
             trust_remote_code=True,
         )
         tokenizer_results = []
