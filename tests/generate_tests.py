@@ -58,6 +58,9 @@ TOKENIZERS_TO_IGNORE = [
 
     # TODO: remove when https://github.com/huggingface/transformers/issues/28096 is addressed
     'RajuKandasamy/tamillama_tiny_30m',
+
+    # TODO: remove when need for trust_remote_code can be addressed in CI
+    'monologg/kobert',
 ]
 
 MAX_TESTS = {
@@ -269,15 +272,18 @@ def generate_tokenizer_tests():
                     tokenizer = AutoTokenizer.from_pretrained(
                         tokenizer_name,
                         use_fast=False,
+                        trust_remote_code=True,
                     )
                     decoder_tokenizer = AutoTokenizer.from_pretrained(
                         tokenizer_name,
                         use_fast=True,
+                        trust_remote_code=True,
                     )
 
                 else:
                     decoder_tokenizer = tokenizer = AutoTokenizer.from_pretrained(
-                        tokenizer_name)
+                        tokenizer_name,
+                        trust_remote_code=True)
 
             except (KeyError, EnvironmentError):
                 # If a KeyError/EnvironmentError is raised from the AutoTokenizer, it
@@ -329,6 +335,7 @@ def generate_tokenizer_tests():
 
             # TODO: Remove once https://github.com/huggingface/transformers/pull/26678 is fixed
             use_fast='llama' not in tokenizer_id,
+            trust_remote_code=True,
         )
         tokenizer_results = []
         for key in TOKENIZERS_WITH_CHAT_TEMPLATES[tokenizer_id]:
@@ -363,7 +370,7 @@ def generate_config_tests():
             print('  -', config_name)
             try:
                 # Load config
-                config = AutoConfig.from_pretrained(config_name)
+                config = AutoConfig.from_pretrained(config_name, trust_remote_code=True)
             except Exception:
                 # Something went wrong, skip this config
                 continue
