@@ -61,6 +61,9 @@ TOKENIZERS_TO_IGNORE = [
 
     # TODO: remove when need for trust_remote_code can be addressed in CI
     'monologg/kobert',
+
+    # TODO: remove when protobuf compatibility issues are resolved
+    'dangvantuan/sentence-camembert-large',
 ]
 
 MAX_TESTS = {
