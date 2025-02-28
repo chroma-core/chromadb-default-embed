@@ -3,23 +3,12 @@
 
 import json
 import os
-import sys
 from itertools import product
 
 from transformers import AutoTokenizer, AutoConfig
 import numpy as np
 
 from scripts.supported_models import SUPPORTED_MODELS
-
-# Handle protobuf compatibility issues by setting the environment variable if not already set
-# This is one of the workarounds mentioned in the error message
-if 'PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION' not in os.environ:
-    os.environ['PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION'] = 'python'
-
-# Check if we should run in local mode (safer settings)
-LOCAL_MODE = '--local' in sys.argv
-if LOCAL_MODE:
-    print("Running in local mode with safer settings")
 
 # List of tokenizers where the model isn't yet supported, but the tokenizer is
 ADDITIONAL_TOKENIZERS_TO_TEST = {
@@ -69,12 +58,6 @@ TOKENIZERS_TO_IGNORE = [
 
     # TODO: remove when https://github.com/huggingface/transformers/issues/28096 is addressed
     'RajuKandasamy/tamillama_tiny_30m',
-
-    # TODO: remove when need for trust_remote_code can be addressed in CI
-    'monologg/kobert',
-
-    # TODO: remove when protobuf compatibility issues are resolved
-    'dangvantuan/sentence-camembert-large',
 ]
 
 MAX_TESTS = {
@@ -286,21 +269,15 @@ def generate_tokenizer_tests():
                     tokenizer = AutoTokenizer.from_pretrained(
                         tokenizer_name,
                         use_fast=False,
-                        trust_remote_code=True,
                     )
                     decoder_tokenizer = AutoTokenizer.from_pretrained(
                         tokenizer_name,
                         use_fast=True,
-                        trust_remote_code=True,
                     )
 
                 else:
-                    # In local mode, always use slow tokenizers to avoid protobuf issues
-                    use_fast = not LOCAL_MODE
                     decoder_tokenizer = tokenizer = AutoTokenizer.from_pretrained(
-                        tokenizer_name,
-                        trust_remote_code=True,
-                        use_fast=use_fast)
+                        tokenizer_name)
 
             except (KeyError, EnvironmentError):
                 # If a KeyError/EnvironmentError is raised from the AutoTokenizer, it
@@ -347,42 +324,29 @@ def generate_tokenizer_tests():
 
     for tokenizer_id in TOKENIZERS_WITH_CHAT_TEMPLATES:
         print(f'Generating chat templates for {tokenizer_id}')
+        tokenizer = AutoTokenizer.from_pretrained(
+            tokenizer_id,
 
-        try:
-            # In local mode, use safer settings
-            use_fast = not LOCAL_MODE or 'llama' not in tokenizer_id
+            # TODO: Remove once https://github.com/huggingface/transformers/pull/26678 is fixed
+            use_fast='llama' not in tokenizer_id,
+        )
+        tokenizer_results = []
+        for key in TOKENIZERS_WITH_CHAT_TEMPLATES[tokenizer_id]:
+            messages = CHAT_MESSAGES_EXAMPLES[key]
 
-            tokenizer = AutoTokenizer.from_pretrained(
-                tokenizer_id,
-                use_fast=use_fast,
-                trust_remote_code=True,
-            )
-            tokenizer_results = []
-            for key in TOKENIZERS_WITH_CHAT_TEMPLATES[tokenizer_id]:
-                messages = CHAT_MESSAGES_EXAMPLES[key]
+            for add_generation_prompt, tokenize in product([True, False], [True, False]):
+                tokenizer_results.append(dict(
+                    messages=messages,
+                    add_generation_prompt=add_generation_prompt,
+                    tokenize=tokenize,
+                    target=tokenizer.apply_chat_template(
+                        messages,
+                        add_generation_prompt=add_generation_prompt,
+                        tokenize=tokenize,
+                    ),
+                ))
 
-                for add_generation_prompt, tokenize in product([True, False], [True, False]):
-                    try:
-                        result = tokenizer.apply_chat_template(
-                            messages,
-                            add_generation_prompt=add_generation_prompt,
-                            tokenize=tokenize,
-                        )
-                        tokenizer_results.append(dict(
-                            messages=messages,
-                            add_generation_prompt=add_generation_prompt,
-                            tokenize=tokenize,
-                            target=result,
-                        ))
-                    except ValueError as e:
-                        print(f"  - Skipping template for {tokenizer_id} with {key}: {str(e)}")
-                        continue
-
-            if tokenizer_results:
-                template_results[tokenizer_id] = tokenizer_results
-        except Exception as e:
-            print(f"  - Error processing tokenizer {tokenizer_id}: {str(e)}")
-            continue
+        template_results[tokenizer_id] = tokenizer_results
 
     return dict(
         tokenization=tokenization_results,
@@ -399,7 +363,7 @@ def generate_config_tests():
             print('  -', config_name)
             try:
                 # Load config
-                config = AutoConfig.from_pretrained(config_name, trust_remote_code=True)
+                config = AutoConfig.from_pretrained(config_name)
             except Exception:
                 # Something went wrong, skip this config
                 continue
@@ -465,4 +429,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
