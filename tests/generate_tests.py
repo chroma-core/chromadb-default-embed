@@ -53,6 +53,15 @@ MODELS_TO_IGNORE = [
 ]
 
 TOKENIZERS_TO_IGNORE = [
+    # Skip tokenizers for models where model_max_length is not defined
+    "google-bert/bert-base-uncased",
+    "bert-base-uncased",
+    "google/mt5-small",
+    "microsoft/deberta-v2-xlarge",
+    "xlm-roberta-base",
+    'google/fnet-base',
+    "microsoft/trocr-small-handwritten",
+
     # TODO: remove when https://github.com/huggingface/transformers/pull/25478 is merged
     'facebook/m2m100_418M',
 
