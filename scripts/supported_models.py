@@ -164,13 +164,13 @@ SUPPORTED_MODELS = {
             'Jean-Baptiste/camembert-ner',
             # 'Jean-Baptiste/camembert-ner-with-dates',
             'pythainlp/thainer-corpus-v2-base-model',
-            'gilf/french-camembert-postag-model',
+            # 'gilf/french-camembert-postag-model',
         ],
 
         # Masked language modelling
         'fill-mask': [
             'camembert-base',
-            'airesearch/wangchanberta-base-att-spm-uncased',
+            # 'airesearch/wangchanberta-base-att-spm-uncased',
         ],
     },
     'clap': {
@@ -387,13 +387,13 @@ SUPPORTED_MODELS = {
     'donut': {  # NOTE: also a `vision-encoder-decoder`
         # Image-to-text
         'image-to-text': [
-            'naver-clova-ix/donut-base-finetuned-cord-v2',
-            'naver-clova-ix/donut-base-finetuned-zhtrainticket',
+            #'naver-clova-ix/donut-base-finetuned-cord-v2',
+            #'naver-clova-ix/donut-base-finetuned-zhtrainticket',
         ],
 
         # Document Question Answering
         'document-question-answering': [
-            'naver-clova-ix/donut-base-finetuned-docvqa',
+            # 'naver-clova-ix/donut-base-finetuned-docvqa',
         ],
     },
     'dpt': {
@@ -576,7 +576,7 @@ SUPPORTED_MODELS = {
         # Translation
         'translation': [
             'facebook/mbart-large-50-many-to-many-mmt',
-            'facebook/mbart-large-50-many-to-one-mmt',
+            #'facebook/mbart-large-50-many-to-one-mmt',
             'facebook/mbart-large-50',
         ],
     },
@@ -632,7 +632,7 @@ SUPPORTED_MODELS = {
         # Text-to-text
         'text2text-generation': [
             'google/mt5-small',
-            'google/mt5-base',
+            # 'google/mt5-base',
         ],
     },
     'nougat': {
@@ -835,8 +835,8 @@ SUPPORTED_MODELS = {
         ('translation', 'summarization'): [
             't5-small',
             't5-base',
-            'google/t5-v1_1-small',
-            'google/t5-v1_1-base',
+            # 'google/t5-v1_1-small',
+            # 'google/t5-v1_1-base',
             'google/flan-t5-small',
             'google/flan-t5-base',
         ],
