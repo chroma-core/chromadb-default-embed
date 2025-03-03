@@ -2,7 +2,7 @@
 
 <p align="center">
     <br/>
-    <picture> 
+    <picture>
         <source media="(prefers-color-scheme: dark)" srcset="https://huggingface.co/datasets/Xenova/transformers.js-docs/raw/main/transformersjs-dark.svg" width="500" style="max-width: 100%;">
         <source media="(prefers-color-scheme: light)" srcset="https://huggingface.co/datasets/Xenova/transformers.js-docs/raw/main/transformersjs-light.svg" width="500" style="max-width: 100%;">
         <img alt="transformers.js javascript library logo" src="https://huggingface.co/datasets/Xenova/transformers.js-docs/raw/main/transformersjs-light.svg" width="500" style="max-width: 100%;">
@@ -11,14 +11,14 @@
 </p>
 
 <p align="center">
-    <a href="https://www.npmjs.com/package/@xenova/transformers">
-        <img alt="NPM" src="https://img.shields.io/npm/v/@xenova/transformers">
+    <a href="https://www.npmjs.com/package/chromadb-default-embed">
+        <img alt="NPM" src="https://img.shields.io/npm/v/chromadb-default-embed">
     </a>
-    <a href="https://www.npmjs.com/package/@xenova/transformers">
-        <img alt="NPM Downloads" src="https://img.shields.io/npm/dw/@xenova/transformers">
+    <a href="https://www.npmjs.com/package/chromadb-default-embed">
+        <img alt="NPM Downloads" src="https://img.shields.io/npm/dw/chromadb-default-embed">
     </a>
-    <a href="https://www.jsdelivr.com/package/npm/@xenova/transformers">
-        <img alt="jsDelivr Hits" src="https://img.shields.io/jsdelivr/npm/hw/@xenova/transformers">
+    <a href="https://www.jsdelivr.com/package/npm/chromadb-default-embed">
+        <img alt="jsDelivr Hits" src="https://img.shields.io/jsdelivr/npm/hw/chromadb-default-embed">
     </a>
     <a href="https://github.com/xenova/transformers.js/blob/main/LICENSE">
         <img alt="License" src="https://img.shields.io/github/license/xenova/transformers.js?color=blue">
@@ -38,7 +38,7 @@ Transformers.js is designed to be functionally equivalent to Hugging Face's [tra
   - 🗣️ **Audio**: automatic speech recognition and audio classification.
   - 🐙 **Multimodal**: zero-shot image classification.
 
-Transformers.js uses [ONNX Runtime](https://onnxruntime.ai/) to run models in the browser. The best part about it, is that you can easily [convert](#convert-your-models-to-onnx) your pretrained PyTorch, TensorFlow, or JAX models to ONNX using [🤗 Optimum](https://github.com/huggingface/optimum#onnx--onnx-runtime). 
+Transformers.js uses [ONNX Runtime](https://onnxruntime.ai/) to run models in the browser. The best part about it, is that you can easily [convert](#convert-your-models-to-onnx) your pretrained PyTorch, TensorFlow, or JAX models to ONNX using [🤗 Optimum](https://github.com/huggingface/optimum#onnx--onnx-runtime).
 
 For more information, check out the full [documentation](https://huggingface.co/docs/transformers.js).
 
@@ -70,7 +70,7 @@ out = pipe('I love transformers!')
 <td>
 
 ```javascript
-import { pipeline } from '@xenova/transformers';
+import { pipeline } from 'chromadb-default-embed';
 
 // Allocate a pipeline for sentiment-analysis
 let pipe = await pipeline('sentiment-analysis');
@@ -94,15 +94,15 @@ let pipe = await pipeline('sentiment-analysis', 'Xenova/bert-base-multilingual-u
 ## Installation
 
 
-To install via [NPM](https://www.npmjs.com/package/@xenova/transformers), run:
+To install via [NPM](https://www.npmjs.com/package/chromadb-default-embed), run:
 ```bash
-npm i @xenova/transformers
+npm i chromadb-default-embed
 ```
 
 Alternatively, you can use it in vanilla JS, without any bundler, by using a CDN or static hosting. For example, using [ES Modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules), you can import the library with:
 ```html
 <script type="module">
-    import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.13.2';
+    import { pipeline } from 'https://cdn.jsdelivr.net/npm/chromadb-default-embed@2.13.2';
 </script>
 ```
 
@@ -135,13 +135,13 @@ Check out the Transformers.js [template](https://huggingface.co/new-space?templa
 
 
 
-By default, Transformers.js uses [hosted pretrained models](https://huggingface.co/models?library=transformers.js) and [precompiled WASM binaries](https://cdn.jsdelivr.net/npm/@xenova/transformers@2.13.2/dist/), which should work out-of-the-box. You can customize this as follows:
+By default, Transformers.js uses [hosted pretrained models](https://huggingface.co/models?library=transformers.js) and [precompiled WASM binaries](https://cdn.jsdelivr.net/npm/chromadb-default-embed@2.13.2/dist/), which should work out-of-the-box. You can customize this as follows:
 
 
 ### Settings
 
 ```javascript
-import { env } from '@xenova/transformers';
+import { env } from 'chromadb-default-embed';
 
 // Specify a custom location for models (defaults to '/models/').
 env.localModelPath = '/path/to/models/';

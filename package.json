@@ -1,6 +1,6 @@
 {
   "name": "chromadb-default-embed",
-  "version": "2.13.3",
+  "version": "2.14.0",
   "description": "Chroma's fork of @xenova/transformers serving as our default embedding function",
   "main": "./src/transformers.js",
   "types": "./types/transformers.d.ts",

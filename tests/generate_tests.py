@@ -53,11 +53,27 @@ MODELS_TO_IGNORE = [
 ]
 
 TOKENIZERS_TO_IGNORE = [
+    # Skip tokenizers for models where model_max_length is not defined
+    "google-bert/bert-base-uncased",
+    "bert-base-uncased",
+    "google/mt5-small",
+    "microsoft/deberta-v2-xlarge",
+    "xlm-roberta-base",
+    'google/fnet-base',
+    "microsoft/trocr-small-handwritten",
+
     # TODO: remove when https://github.com/huggingface/transformers/pull/25478 is merged
     'facebook/m2m100_418M',
 
     # TODO: remove when https://github.com/huggingface/transformers/issues/28096 is addressed
     'RajuKandasamy/tamillama_tiny_30m',
+
+    # TODO: remove when KoBertTokenizer is properly supported
+    'monologg/kobert',
+
+    # not used in chromadb
+    'dangvantuan/sentence-camembert-large',
+    'Jean-Baptiste/camembert-ner',
 ]
 
 MAX_TESTS = {
@@ -195,9 +211,10 @@ TOKENIZERS_WITH_CHAT_TEMPLATES = {
         'basic',
     ],
 
-    'mistralai/Mistral-7B-Instruct-v0.1': [
-        'basic',
-    ],
+    # Remove gated model that requires authentication
+    # 'mistralai/Mistral-7B-Instruct-v0.1': [
+    #     'basic',
+    # ],
 
     'HuggingFaceH4/zephyr-7b-beta': [
         'system',
@@ -324,29 +341,32 @@ def generate_tokenizer_tests():
 
     for tokenizer_id in TOKENIZERS_WITH_CHAT_TEMPLATES:
         print(f'Generating chat templates for {tokenizer_id}')
-        tokenizer = AutoTokenizer.from_pretrained(
-            tokenizer_id,
+        try:
+            tokenizer = AutoTokenizer.from_pretrained(
+                tokenizer_id,
+                # TODO: Remove once https://github.com/huggingface/transformers/pull/26678 is fixed
+                use_fast='llama' not in tokenizer_id,
+            )
+            tokenizer_results = []
+            for key in TOKENIZERS_WITH_CHAT_TEMPLATES[tokenizer_id]:
+                messages = CHAT_MESSAGES_EXAMPLES[key]
 
-            # TODO: Remove once https://github.com/huggingface/transformers/pull/26678 is fixed
-            use_fast='llama' not in tokenizer_id,
-        )
-        tokenizer_results = []
-        for key in TOKENIZERS_WITH_CHAT_TEMPLATES[tokenizer_id]:
-            messages = CHAT_MESSAGES_EXAMPLES[key]
-
-            for add_generation_prompt, tokenize in product([True, False], [True, False]):
-                tokenizer_results.append(dict(
-                    messages=messages,
-                    add_generation_prompt=add_generation_prompt,
-                    tokenize=tokenize,
-                    target=tokenizer.apply_chat_template(
-                        messages,
+                for add_generation_prompt, tokenize in product([True, False], [True, False]):
+                    tokenizer_results.append(dict(
+                        messages=messages,
                         add_generation_prompt=add_generation_prompt,
                         tokenize=tokenize,
-                    ),
-                ))
+                        target=tokenizer.apply_chat_template(
+                            messages,
+                            add_generation_prompt=add_generation_prompt,
+                            tokenize=tokenize,
+                        ),
+                    ))
 
-        template_results[tokenizer_id] = tokenizer_results
+            template_results[tokenizer_id] = tokenizer_results
+        except (OSError, EnvironmentError) as e:
+            print(f"  - Skipping {tokenizer_id}: {str(e)}")
+            continue
 
     return dict(
         tokenization=tokenization_results,
