@@ -575,9 +575,9 @@ SUPPORTED_MODELS = {
     'mbart': {
         # Translation
         'translation': [
-            'facebook/mbart-large-50-many-to-many-mmt',
+            # 'facebook/mbart-large-50-many-to-many-mmt',
             #'facebook/mbart-large-50-many-to-one-mmt',
-            'facebook/mbart-large-50',
+            # 'facebook/mbart-large-50',
         ],
     },
     'mistral': {
